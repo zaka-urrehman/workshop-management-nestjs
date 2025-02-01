@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { MentorModule } from './mentor/mentor.module';
 import { AdminModule } from './admin/admin.module';
+import { WorkshopModule } from './workshop/workshop.module';
 
 @Module({
     imports: [
@@ -22,7 +23,8 @@ import { AdminModule } from './admin/admin.module';
         AdminModule,
         MentorModule,
         LearnerModule,
-        AuthModule
+        AuthModule,
+        WorkshopModule
     ],
     controllers: [AppController],
     providers: [AppService],
