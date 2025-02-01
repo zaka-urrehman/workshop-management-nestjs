@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { RegisterUserDto } from './dto/user-register.dto';
 import { AuthService } from './auth.service';
 import { UserRole } from '../entities/user.entity';
+import { UserLoginDto } from './dto/user-login.dto';
 
 @ApiTags('User Authentication') // Group this controller under 'User Authentication'
 @Controller('auth/user')
@@ -42,11 +43,11 @@ export class UserAuthController {
     @ApiOperation({ summary: 'User login' }) // Describe the endpoint
     @ApiResponse({ status: 200, description: 'Login successful' })
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
-    @ApiBody({ type: RegisterUserDto }) // Describe expected request body
-    async login(@Body() loginDto: RegisterUserDto) {
-        const { username, password } = loginDto;
+    @ApiBody({ type: UserLoginDto }) // Describe expected request body
+    async login(@Body() loginDto: UserLoginDto) {
+        const { email, password } = loginDto;
         try {
-            const result = await this.authService.login(username, password);
+            const result = await this.authService.login(email, password);
             return result;
         } catch (error) {
             throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
