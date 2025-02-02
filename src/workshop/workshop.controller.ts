@@ -78,7 +78,8 @@ export class WorkshopController {
     }
 
     // ============================== CREATE AN ACTIVITY (mentor only) ==============================
-    @Post(':workshopId/activities')
+    @Post(':workshopId/activity')
+    @UseGuards(MentorAuthGuard)
     @ApiOperation({ summary: 'Create a new activity for a workshop' })
     @ApiResponse({ status: 201, description: 'Activity created successfully' })
     @ApiBody({ type: CreateActivityDto })

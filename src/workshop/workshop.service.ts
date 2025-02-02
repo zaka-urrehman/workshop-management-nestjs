@@ -86,11 +86,12 @@ export class WorkshopService {
         }
         return workshop;
     }
-
+    
+    //   ========================= CREATE ACTIVITY =================
     async createActivity(
         workshopId: number,
         createActivityDto: CreateActivityDto,
-        mentor: User,
+        mentor: JWTPayload,
     ): Promise<Activity> {
         // Verify that the workshop exists.
         const workshop = await this.workshopRepository.findOne({ where: { id: workshopId } });
@@ -99,7 +100,7 @@ export class WorkshopService {
         }
 
         // Only the mentor who created the workshop can add activities.
-        if (workshop.mentor_id !== mentor.id) {
+        if (workshop.mentor_id !== mentor.userId) {
             throw new UnauthorizedException('You are not authorized to add activities to this workshop.');
         }
 
