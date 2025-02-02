@@ -7,6 +7,7 @@ import {
     OneToMany,
 } from 'typeorm';
 import { Activity } from './activity.entity';
+import { Enrollment } from 'src/enrollment/entities/enrollment.entity';
 
 @Entity('workshops')
 export class Workshop {
@@ -40,4 +41,7 @@ export class Workshop {
 
     @OneToMany(() => Activity, (activity) => activity.workshop)
     activities: Activity[];
+
+    @OneToMany(() => Enrollment, enrollment => enrollment.workshop)
+    enrollments: Enrollment[];
 }
