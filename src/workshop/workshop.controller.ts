@@ -9,10 +9,8 @@ import { UpdateWorkshopDto } from './dto/update-workshop.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 // Use the mentor auth guard we created.
 import { MentorAuthGuard } from '../common/guards/mentor-auth.guard';
+import { RequestWithUser } from 'src/interfaces/request-with-user.interface';
 
-interface RequestWithUser extends Request {
-    user: any;
-}
 
 @ApiTags('Workshops')
 @Controller('workshops')
