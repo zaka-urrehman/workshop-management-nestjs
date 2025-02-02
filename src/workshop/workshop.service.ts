@@ -7,6 +7,7 @@ import { CreateWorkshopDto } from './dto/create-workshop.dto';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { User, UserRole } from '../entities/user.entity';
 import { UpdateWorkshopDto } from './dto/update-workshop.dto';
+import { UpdateActivityDto } from './dto/update-activity.dto';
 
 interface JWTPayload {
     userId: number
@@ -86,7 +87,7 @@ export class WorkshopService {
         }
         return workshop;
     }
-    
+
     //   ========================= CREATE ACTIVITY =================
     async createActivity(
         workshopId: number,
@@ -109,5 +110,66 @@ export class WorkshopService {
             workshop_id: workshopId,
         });
         return this.activityRepository.save(activity);
+    }
+
+
+    // ======================== UPDATE ACTIVITY =================
+    async updateActivity(
+        workshopId: number,
+        activityId: number,
+        updateActivityDto: UpdateActivityDto,
+        mentor: JWTPayload,
+    ): Promise<{ message: string; activity: Activity }> {
+        // Verify the workshop exists.
+        const workshop = await this.workshopRepository.findOne({ where: { id: workshopId } });
+        if (!workshop) {
+            throw new NotFoundException('Workshop not found');
+        }
+        // Ensure the mentor owns the workshop.
+        if (workshop.mentor_id !== mentor.userId) {
+            throw new UnauthorizedException('You are not authorized to update this activity.');
+        }
+        // Verify that the activity belongs to the workshop.
+        const activity = await this.activityRepository.findOne({ where: { id: activityId, workshop_id: workshopId } });
+        if (!activity) {
+            throw new NotFoundException('Activity not found');
+        }
+        const updatedActivity = this.activityRepository.merge(activity, updateActivityDto);
+        const savedActivity = await this.activityRepository.save(updatedActivity);
+        return { message: 'Activity updated successfully', activity: savedActivity };
+    }
+
+    // ======================= DELETE ACTIVITY =================
+    async deleteActivity(workshopId: number, activityId: number, mentor: JWTPayload): Promise<{ message: string }> {
+        // Verify the workshop exists.
+        const workshop = await this.workshopRepository.findOne({ where: { id: workshopId } });
+        if (!workshop) {
+            throw new NotFoundException('Workshop not found');
+        }
+        // Ensure the mentor owns the workshop.
+        if (workshop.mentor_id !== mentor.userId) {
+            throw new UnauthorizedException('You are not authorized to delete this activity.');
+        }
+        // Verify that the activity belongs to the workshop.
+        const activity = await this.activityRepository.findOne({ where: { id: activityId, workshop_id: workshopId } });
+        if (!activity) {
+            throw new NotFoundException('Activity not found');
+        }
+        await this.activityRepository.delete(activity.id);
+        return { message: 'Activity deleted successfully' };
+    }
+
+    // ======================= GET ALL ACTIVITIES =================
+    async getAllActivities(workshopId: number): Promise<Activity[]> {
+        return await this.activityRepository.find({ where: { workshop_id: workshopId } });
+    }
+
+    // ======================= GET ACTIVITY BY ID =================
+    async getActivityById(workshopId: number, activityId: number): Promise<Activity> {
+        const activity = await this.activityRepository.findOne({ where: { id: activityId, workshop_id: workshopId } });
+        if (!activity) {
+            throw new NotFoundException('Activity not found');
+        }
+        return activity;
     }
 }
