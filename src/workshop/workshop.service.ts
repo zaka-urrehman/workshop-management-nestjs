@@ -9,12 +9,6 @@ import { User, UserRole } from '../entities/user.entity';
 import { UpdateWorkshopDto } from './dto/update-workshop.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 
-interface JWTPayload {
-    userId: number
-    username: string
-    role: string
-    email: string
-}
 
 @Injectable()
 export class WorkshopService {
